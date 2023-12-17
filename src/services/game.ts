@@ -140,9 +140,10 @@ export class GameService {
     this.mineMap = mineMap;
   }
 
-  private uncoverCell(x: number, y: number) {
+  private uncoverCell(x: number, y: number, auto = false) {
     if (
       this.cellStateMap.get(`${x},${y}`) === CellState.ON ||
+      (this.cellStateMap.get(`${x},${y}`) === CellState.FLAG && !auto) ||
       this.mineMap === null
     ) {
       return;
@@ -151,7 +152,9 @@ export class GameService {
     this.cellStateMap.set(`${x},${y}`, CellState.ON);
 
     if (this.mineMap.get(`${x},${y}`) === undefined) {
-      this.getNeighbors(x, y).forEach(([nx, ny]) => this.uncoverCell(nx, ny));
+      this.getNeighbors(x, y).forEach(([nx, ny]) =>
+        this.uncoverCell(nx, ny, true)
+      );
     }
   }
 
