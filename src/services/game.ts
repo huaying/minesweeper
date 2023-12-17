@@ -138,7 +138,7 @@ export class GameService {
 
   private uncoverCell(x: number, y: number) {
     if (
-      this.cellStateMap.get(`${x},${y}`) !== CellState.OFF ||
+      this.cellStateMap.get(`${x},${y}`) === CellState.ON ||
       this.mineMap === null
     ) {
       return;
