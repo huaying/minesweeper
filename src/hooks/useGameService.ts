@@ -10,6 +10,9 @@ const useGameService = (numRows: number, numCols: number, numMines: number) => {
 
   const [board, setBoard] = useState(service.getBoard());
   const [gameState, setGameState] = useState(service.getGameState());
+  const [remainingFlags, setRemainingFlags] = useState(
+    service.getRemainingFlags()
+  );
 
   const dispatchEvent = useCallback(
     (event: CellEvent, x: number, y: number) => {
@@ -21,6 +24,7 @@ const useGameService = (numRows: number, numCols: number, numMines: number) => {
 
       setGameState(service.getGameState());
       setBoard(service.getBoard());
+      setRemainingFlags(service.getRemainingFlags());
     },
     [service, gameState]
   );
@@ -30,9 +34,10 @@ const useGameService = (numRows: number, numCols: number, numMines: number) => {
 
     setGameState(service.getGameState());
     setBoard(service.getBoard());
+    setRemainingFlags(service.getRemainingFlags());
   }, [service]);
 
-  return { gameState, board, dispatchEvent, startOver };
+  return { gameState, board, remainingFlags, dispatchEvent, startOver };
 };
 
 export default useGameService;

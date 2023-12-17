@@ -13,7 +13,7 @@ export class GameService {
   private numMines: number;
   private mineMap: Map<string, number> | null;
   private cellStateMap: CellStateMap;
-  private flagRemaining: number;
+  private remainingFlags: number;
   private gameState: GameState;
 
   constructor(numRows: number, numCols: number, numMines: number) {
@@ -22,7 +22,7 @@ export class GameService {
     this.numMines = numMines;
     this.mineMap = null;
     this.cellStateMap = new CellStateMap();
-    this.flagRemaining = numMines;
+    this.remainingFlags = numMines;
     this.gameState = GameState.ON_GOING;
   }
 
@@ -39,6 +39,10 @@ export class GameService {
 
   public getGameState() {
     return this.gameState;
+  }
+
+  public getRemainingFlags() {
+    return this.remainingFlags;
   }
 
   public dispatchEvent(event: CellEvent, x: number, y: number) {
@@ -60,7 +64,7 @@ export class GameService {
   public startOver() {
     this.mineMap = null;
     this.cellStateMap = new CellStateMap();
-    this.flagRemaining = this.numMines;
+    this.remainingFlags = this.numMines;
     this.gameState = GameState.ON_GOING;
   }
 
@@ -169,13 +173,13 @@ export class GameService {
   private flagCell(x: number, y: number) {
     if (
       this.cellStateMap.get(`${x},${y}`) === CellState.OFF &&
-      this.flagRemaining > 0
+      this.remainingFlags > 0
     ) {
       this.cellStateMap.set(`${x},${y}`, CellState.FLAG);
-      this.flagRemaining--;
+      this.remainingFlags--;
     } else if (this.cellStateMap.get(`${x},${y}`) === CellState.FLAG) {
       this.cellStateMap.set(`${x},${y}`, CellState.OFF);
-      this.flagRemaining++;
+      this.remainingFlags++;
     }
   }
 }
