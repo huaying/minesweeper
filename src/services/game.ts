@@ -1,5 +1,5 @@
 import { MINE } from "../config";
-import { CellEvent, CellState } from "../constants";
+import { CellEvent, CellState, GameState } from "../constants";
 
 class CellStateMap extends Map<string, CellState> {
   get(key: string): CellState | undefined {
@@ -13,6 +13,8 @@ export class GameService {
   private numMines: number;
   private mineMap: Map<string, number> | null;
   private cellStateMap: CellStateMap;
+  private flagRemaining: number;
+  private gameState: GameState;
 
   constructor(numRows: number, numCols: number, numMines: number) {
     this.numRows = numRows;
@@ -20,6 +22,8 @@ export class GameService {
     this.numMines = numMines;
     this.mineMap = null;
     this.cellStateMap = new CellStateMap();
+    this.flagRemaining = numMines;
+    this.gameState = GameState.ON_GOING;
   }
 
   public getBoard() {
@@ -31,6 +35,10 @@ export class GameService {
         };
       })
     );
+  }
+
+  public getGameState() {
+    return this.gameState;
   }
 
   public dispatchEvent(event: CellEvent, x: number, y: number) {
@@ -46,7 +54,32 @@ export class GameService {
       this.expandCell(x, y);
     }
 
-    return this.getBoard();
+    this.updateGameState();
+  }
+
+  public startOver() {
+    this.mineMap = null;
+    this.cellStateMap = new CellStateMap();
+    this.flagRemaining = this.numMines;
+    this.gameState = GameState.ON_GOING;
+  }
+
+  private updateGameState() {
+    if (
+      Array.from(this.cellStateMap).some(
+        ([key, cellState]) =>
+          cellState === CellState.ON && this.mineMap?.get(key) === MINE
+      )
+    ) {
+      this.gameState = GameState.LOST;
+    } else if (
+      this.cellStateMap.size === this.numRows * this.numCols &&
+      Array.from(this.cellStateMap.values()).every(
+        (cellState) => cellState !== CellState.OFF
+      )
+    ) {
+      this.gameState = GameState.WIN;
+    }
   }
 
   private getNeighbors(x: number, y: number) {
@@ -134,10 +167,15 @@ export class GameService {
   }
 
   private flagCell(x: number, y: number) {
-    if (this.cellStateMap.get(`${x},${y}`) === CellState.OFF) {
+    if (
+      this.cellStateMap.get(`${x},${y}`) === CellState.OFF &&
+      this.flagRemaining > 0
+    ) {
       this.cellStateMap.set(`${x},${y}`, CellState.FLAG);
+      this.flagRemaining--;
     } else if (this.cellStateMap.get(`${x},${y}`) === CellState.FLAG) {
       this.cellStateMap.set(`${x},${y}`, CellState.OFF);
+      this.flagRemaining++;
     }
   }
 }

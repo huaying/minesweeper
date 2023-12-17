@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { GameService } from "../services/game";
-import { CellEvent } from "../constants";
+import { CellEvent, GameState } from "../constants";
 
 const useGameService = (numRows: number, numCols: number, numMines: number) => {
   const service = useMemo(
@@ -9,16 +9,30 @@ const useGameService = (numRows: number, numCols: number, numMines: number) => {
   );
 
   const [board, setBoard] = useState(service.getBoard());
+  const [gameState, setGameState] = useState(service.getGameState());
 
   const dispatchEvent = useCallback(
     (event: CellEvent, x: number, y: number) => {
+      if (gameState !== GameState.ON_GOING) {
+        return;
+      }
+
       service.dispatchEvent(event, x, y);
+
+      setGameState(service.getGameState());
       setBoard(service.getBoard());
     },
-    [service]
+    [service, gameState]
   );
 
-  return { board, dispatchEvent };
+  const startOver = useCallback(() => {
+    service.startOver();
+
+    setGameState(service.getGameState());
+    setBoard(service.getBoard());
+  }, [service]);
+
+  return { gameState, board, dispatchEvent, startOver };
 };
 
 export default useGameService;

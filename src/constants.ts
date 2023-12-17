@@ -1,4 +1,4 @@
-export enum GemeState {
+export enum GameState {
   ON_GOING,
   LOST,
   WIN,
