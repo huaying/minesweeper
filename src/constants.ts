@@ -1,4 +1,5 @@
 export enum GameState {
+  INIT,
   ON_GOING,
   LOST,
   WIN,

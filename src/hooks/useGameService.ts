@@ -16,7 +16,7 @@ const useGameService = (numRows: number, numCols: number, numMines: number) => {
 
   const dispatchEvent = useCallback(
     (event: CellEvent, x: number, y: number) => {
-      if (gameState !== GameState.ON_GOING) {
+      if (![GameState.ON_GOING, GameState.INIT].includes(gameState)) {
         return;
       }
 

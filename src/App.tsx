@@ -4,7 +4,7 @@ function App() {
   return (
     <div className="flex flex-col items-center mt-10 font-mono">
       <div className="text-4xl mb-3">💣</div>
-      <h1 className="text-xl mb-3">Mine Sweeper</h1>
+      <h1 className="text-xl mb-4">Mine Sweeper</h1>
       <Game />
     </div>
   );

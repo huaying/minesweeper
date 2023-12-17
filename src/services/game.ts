@@ -23,7 +23,7 @@ export class GameService {
     this.mineMap = null;
     this.cellStateMap = new CellStateMap();
     this.remainingFlags = numMines;
-    this.gameState = GameState.ON_GOING;
+    this.gameState = GameState.INIT;
   }
 
   public getBoard() {
@@ -49,6 +49,7 @@ export class GameService {
     if (event === CellEvent.CLICK) {
       if (this.mineMap === null) {
         this.generateMines(x, y);
+        this.gameState = GameState.ON_GOING;
       }
 
       this.uncoverCell(x, y);
@@ -58,17 +59,17 @@ export class GameService {
       this.expandCell(x, y);
     }
 
-    this.updateGameState();
+    this.checkEndGame();
   }
 
   public startOver() {
     this.mineMap = null;
     this.cellStateMap = new CellStateMap();
     this.remainingFlags = this.numMines;
-    this.gameState = GameState.ON_GOING;
+    this.gameState = GameState.INIT;
   }
 
-  private updateGameState() {
+  private checkEndGame() {
     if (
       Array.from(this.cellStateMap).some(
         ([key, cellState]) =>
