@@ -1,3 +1,4 @@
+import Game from "./components/Game";
 import bombLogo from "/bomb.svg";
 
 function App() {
@@ -6,7 +7,8 @@ function App() {
       <div className="w-[100px]">
         <img src={bombLogo} />
       </div>
-      <h1 className="text-xl">Mine Sweeper</h1>
+      <h1 className="text-xl mb-3">Mine Sweeper</h1>
+      <Game />
     </div>
   );
 }
