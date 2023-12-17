@@ -1,6 +1,41 @@
-import { CellEvent, CellState, GameState } from "../constants";
-import { NUM_COL, NUM_ROW, NUM_MINE, MINE } from "../config";
+import { GameState } from "../constants";
+import { NUM_COL, NUM_ROW, NUM_MINE } from "../config";
 import useGameService from "../hooks/useGameService";
+import Board from "./Board";
+import { memo, useState } from "react";
+import clsx from "clsx";
+
+const StateDisplay = memo(({ gameState }: { gameState: GameState }) => {
+  if (gameState === GameState.LOST) {
+    return "You Lose 😱";
+  }
+  if (gameState === GameState.WIN) {
+    return "You Win 👑";
+  }
+  return null;
+});
+
+const StartOverButton = memo(({ startOver }: { startOver: () => void }) => {
+  const [isPressed, setIsPressed] = useState(false);
+  return (
+    <button
+      className={clsx(
+        "p-2 bg-gray-200 border-[4px] border-t-gray-100 border-l-gray-100 border-r-gray-500 border-b-gray-500 mb-3",
+        {
+          "bg-gray-200 border-t-gray-500 border-l-gray-500": isPressed,
+        }
+      )}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseOut={() => setIsPressed(false)}
+      onMouseUp={() => {
+        setIsPressed(false);
+        startOver();
+      }}
+    >
+      Start Over
+    </button>
+  );
+});
 
 export default function Game() {
   const { gameState, board, dispatchEvent, startOver } = useGameService(
@@ -11,35 +46,9 @@ export default function Game() {
 
   return (
     <>
-      <div>
-        {board.map((row, i) => (
-          <div key={i} className="flex">
-            {row.map((_, j) => {
-              return (
-                <div
-                  key={j}
-                  className="w-5 h-5 border border-gray-400"
-                  onClick={() => dispatchEvent(CellEvent.CLICK, i, j)}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    dispatchEvent(CellEvent.RIGHT_CLICK, i, j);
-                  }}
-                  onDoubleClick={() => dispatchEvent(CellEvent.DB_CLICK, i, j)}
-                >
-                  {board[i][j].state === CellState.ON &&
-                    (board[i][j].value === MINE
-                      ? "💣"
-                      : `${board[i][j].value}`)}
-                  {board[i][j].state === CellState.FLAG && "🚩"}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      {gameState === GameState.LOST && "Lose"}
-      {gameState === GameState.WIN && "Win"}
-      <button onClick={startOver}>Start Over</button>
+      <Board board={board} dispatchEvent={dispatchEvent} />
+      <StartOverButton startOver={startOver} />
+      <StateDisplay gameState={gameState} />
     </>
   );
 }

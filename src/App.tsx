@@ -1,12 +1,9 @@
 import Game from "./components/Game";
-import bombLogo from "/bomb.svg";
 
 function App() {
   return (
-    <div className="flex flex-col items-center mt-10">
-      <div className="w-[100px]">
-        <img src={bombLogo} />
-      </div>
+    <div className="flex flex-col items-center mt-10 font-mono">
+      <div className="text-4xl mb-3">💣</div>
       <h1 className="text-xl mb-3">Mine Sweeper</h1>
       <Game />
     </div>

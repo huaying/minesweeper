@@ -2,7 +2,7 @@ import { MINE } from "../config";
 import { CellEvent, CellState, GameState } from "../constants";
 
 class CellStateMap extends Map<string, CellState> {
-  get(key: string): CellState | undefined {
+  get(key: string): CellState {
     return super.get(key) || CellState.OFF;
   }
 }
